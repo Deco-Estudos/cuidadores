@@ -4,6 +4,7 @@ import { useRouter } from '../../infrastructure/router/RouterContext';
 import { AppLayout } from '../layouts/AppLayout';
 import { Button, Badge, Card, Divider } from '../components/ui';
 import { mockSolicitacoes } from '../../infrastructure/data/mockSolicitacoes';
+import { useAssistidos } from '../../infrastructure/state/AssistidosContext';
 
 const statusVariant = { pendente: 'pending', aprovada: 'ok', cancelada: 'cancel' };
 const statusLabel = { pendente: '⏱ Pendente', aprovada: '✓ Aprovada', cancelada: '✕ Cancelada' };
@@ -40,7 +41,10 @@ function ActionCard({ label, sub, icon, onClick, highlight }) {
 
 export function DashboardPage() {
   const { navigate } = useRouter();
+  const { assistidos } = useAssistidos();
   const recentes = mockSolicitacoes.slice(0, 2);
+  const completos = assistidos.filter(a => a.cadastroCompleto).length;
+  const incompletos = assistidos.length - completos;
 
   return (
     <AppLayout>
@@ -51,9 +55,9 @@ export function DashboardPage() {
 
       {/* Action cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
-        <ActionCard label="Nova Solicitação" sub="Buscar um novo cuidador" icon="➕" highlight onClick={() => navigate(ROUTES.PERFIS)} />
+        <ActionCard label="Nova Solicitação" sub={incompletos ? `${incompletos} cadastro(s) para completar` : 'Buscar um novo cuidador'} icon="➕" highlight onClick={() => navigate(ROUTES.PERFIS)} />
         <ActionCard label="Minhas Solicitações" sub={`${mockSolicitacoes.length} solicitações`} icon="📋" onClick={() => navigate(ROUTES.MINHAS_SOLICITACOES)} />
-        <ActionCard label="Cuidadores" sub="Ver perfis disponíveis" icon="👥" onClick={() => navigate(ROUTES.LISTA_CUIDADORES)} />
+        <ActionCard label="Perfis de Assistidos" sub={`${completos}/${assistidos.length} prontos para solicitar`} icon="👥" onClick={() => navigate(ROUTES.PERFIS)} />
         <ActionCard label="Agendamentos" sub="Próximos atendimentos" icon="📅" onClick={() => navigate(ROUTES.AGENDAMENTOS)} />
       </div>
 
@@ -116,7 +120,7 @@ export function DashboardPage() {
           {/* Estatísticas */}
           <Card>
             <p style={{ fontSize: '16px', fontWeight: 600, color: colors.heading, margin: '0 0 16px' }}>Estatísticas</p>
-            {[['Total de Solicitações', 3, colors.heading], ['Aprovadas', 1, colors.okText], ['Pendentes', 2, colors.pendingText]].map(([l, v, c]) => (
+            {[['Total de Solicitações', 3, colors.heading], ['Aprovadas', 1, colors.okText], ['Pendentes', 2, colors.pendingText], ['Cadastros incompletos', incompletos, colors.pendingText]].map(([l, v, c]) => (
               <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: `1px solid ${colors.border}` }}>
                 <span style={{ fontSize: '14px', color: colors.secondary }}>{l}</span>
                 <span style={{ fontSize: '18px', fontWeight: 700, color: c }}>{v}</span>

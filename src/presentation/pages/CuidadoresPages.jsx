@@ -96,7 +96,7 @@ export function ListaCuidadoresPage() {
             <CuidadorCard
               key={c.id}
               cuidador={c}
-              onVerPerfil={() => navigate(ROUTES.PERFIL_CUIDADOR, { cuidador: c })}
+              onVerPerfil={() => navigate(ROUTES.PERFIL_CUIDADOR, { cuidador: c, assistido })}
             />
           ))}
         </div>
@@ -109,6 +109,7 @@ export function ListaCuidadoresPage() {
 export function PerfilCuidadorPage() {
   const { navigate, routeParams } = useRouter();
   const cuidador = routeParams?.cuidador || mockCuidadores[0];
+  const assistido = routeParams?.assistido;
 
   return (
     <div style={{ minHeight: '100vh', background: colors.bgPage, fontFamily: 'Inter, sans-serif' }}>
@@ -147,6 +148,12 @@ export function PerfilCuidadorPage() {
 
           {/* Main content */}
           <Card>
+            {assistido && (
+              <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: radius.lg, padding: '14px 16px', marginBottom: '24px' }}>
+                <p style={{ fontSize: '13px', color: colors.primary, fontWeight: 700, margin: '0 0 6px' }}>Solicitação para</p>
+                <p style={{ fontSize: '14px', color: colors.heading, margin: 0 }}>{assistido.nome} · {assistido.condicao} · {assistido.mobilidade}</p>
+              </div>
+            )}
             {/* Sobre */}
             <div style={{ marginBottom: '28px' }}>
               <h3 style={{ fontSize: '16px', fontWeight: 700, color: colors.heading, margin: '0 0 12px', paddingBottom: '10px', borderBottom: `1px solid ${colors.border}` }}>
@@ -187,7 +194,7 @@ export function PerfilCuidadorPage() {
 
             {/* CTA */}
             <button
-              onClick={() => navigate(ROUTES.CONFIRMACAO_SOLICITACAO, { cuidador })}
+              onClick={() => navigate(ROUTES.CONFIRMACAO_SOLICITACAO, { cuidador, assistido })}
               style={{
                 width: '100%', background: gradients.primary, color: colors.white,
                 border: 'none', borderRadius: radius.md, padding: '16px',

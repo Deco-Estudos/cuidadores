@@ -15,13 +15,16 @@ const statusLabel = { pendente: '⏱ Pendente', aprovada: '✓ Aprovada', cancel
 export function ConfirmacaoSolicitacaoPage() {
   const { navigate, routeParams } = useRouter();
   const cuidador = routeParams?.cuidador || mockCuidadores[0];
+  const assistido = routeParams?.assistido;
 
   const rows = [
     ['Cuidador:', `${cuidador.nome} — ${cuidador.especialidade}`],
-    ['Assistido:', 'João Silva (Avô) — 75 anos'],
-    ['Turno:', cuidador.turnos?.[0] || 'Manhã (06h às 14h)'],
-    ['Frequência:', 'Diária'],
-    ['Local:', 'Residência do assistido'],
+    ['Assistido:', assistido ? `${assistido.nome} — ${assistido.idade}` : 'João Silva (Avô) — 75 anos'],
+    ['Condição:', assistido?.condicao || 'Parkinson'],
+    ['Mobilidade:', assistido?.mobilidade || 'Cadeira de rodas'],
+    ['Turno:', assistido?.turno || cuidador.turnos?.[0] || 'Manhã (06h às 14h)'],
+    ['Frequência:', assistido?.frequencia || 'Diária'],
+    ['Local:', assistido?.local || 'Residência do assistido'],
   ];
 
   return (
@@ -47,7 +50,7 @@ export function ConfirmacaoSolicitacaoPage() {
           <Button variant="green" fullWidth size="lg" onClick={() => navigate(ROUTES.DASHBOARD)}>
             Confirmar Solicitação
           </Button>
-          <Button variant="outline" fullWidth size="lg" onClick={() => navigate(ROUTES.PERFIL_CUIDADOR, { cuidador })}>
+          <Button variant="outline" fullWidth size="lg" onClick={() => navigate(ROUTES.PERFIL_CUIDADOR, { cuidador, assistido })}>
             Cancelar
           </Button>
         </div>
