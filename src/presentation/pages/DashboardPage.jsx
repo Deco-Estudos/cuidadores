@@ -5,6 +5,7 @@ import { AppLayout } from '../layouts/AppLayout';
 import { Button, Badge, Card, Divider } from '../components/ui';
 import { mockSolicitacoes } from '../../infrastructure/data/mockSolicitacoes';
 import { useAssistidos } from '../../infrastructure/state/AssistidosContext';
+import { useAuth } from '../../infrastructure/state/AuthContext';
 
 const statusVariant = { pendente: 'pending', aprovada: 'ok', cancelada: 'cancel' };
 const statusLabel = { pendente: '⏱ Pendente', aprovada: '✓ Aprovada', cancelada: '✕ Cancelada' };
@@ -42,21 +43,23 @@ function ActionCard({ label, sub, icon, onClick, highlight }) {
 export function DashboardPage() {
   const { navigate } = useRouter();
   const { assistidos } = useAssistidos();
-  const recentes = mockSolicitacoes.slice(0, 2);
+  const { usuarioLogado } = useAuth();
+  const nomesAssistidos = assistidos.map((assistido) => assistido.nome);
+  const recentes = mockSolicitacoes.filter((solicitacao) => nomesAssistidos.some((nome) => solicitacao.assistidoNome.includes(nome))).slice(0, 2);
   const completos = assistidos.filter(a => a.cadastroCompleto).length;
   const incompletos = assistidos.length - completos;
 
   return (
     <AppLayout>
       <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 700, color: colors.heading, margin: '0 0 6px' }}>Bem-vindo, Maria! 👋</h1>
+        <h1 style={{ fontSize: '28px', fontWeight: 700, color: colors.heading, margin: '0 0 6px' }}>Bem-vindo, {usuarioLogado?.nome || 'usuário'}! 👋</h1>
         <p style={{ fontSize: '15px', color: colors.secondary, margin: 0 }}>Gerencie suas solicitações e encontre o cuidador ideal</p>
       </div>
 
       {/* Action cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
         <ActionCard label="Nova Solicitação" sub={incompletos ? `${incompletos} cadastro(s) para completar` : 'Buscar um novo cuidador'} icon="➕" highlight onClick={() => navigate(ROUTES.PERFIS)} />
-        <ActionCard label="Minhas Solicitações" sub={`${mockSolicitacoes.length} solicitações`} icon="📋" onClick={() => navigate(ROUTES.MINHAS_SOLICITACOES)} />
+        <ActionCard label="Minhas Solicitações" sub={`${recentes.length} solicitação(ões)`} icon="📋" onClick={() => navigate(ROUTES.MINHAS_SOLICITACOES)} />
         <ActionCard label="Perfis de Assistidos" sub={`${completos}/${assistidos.length} prontos para solicitar`} icon="👥" onClick={() => navigate(ROUTES.PERFIS)} />
         <ActionCard label="Agendamentos" sub="Próximos atendimentos" icon="📅" onClick={() => navigate(ROUTES.AGENDAMENTOS)} />
       </div>
@@ -95,7 +98,7 @@ export function DashboardPage() {
                 <p style={{ fontSize: '13px', color: colors.muted, margin: 0 }}>Informações pessoais</p>
               </div>
             </div>
-            {[['Nome', 'Maria Silva'], ['E-mail', 'maria.silva@email.com'], ['Telefone', '(11) 98765-4321']].map(([l, v]) => (
+            {[['Nome', usuarioLogado?.nome || '-'], ['E-mail', usuarioLogado?.email || '-'], ['Telefone', usuarioLogado?.telefone || 'Não informado']].map(([l, v]) => (
               <div key={l} style={{ marginBottom: '12px' }}>
                 <p style={{ fontSize: '12px', color: colors.muted, margin: '0 0 2px' }}>{l}</p>
                 <p style={{ fontSize: '14px', color: colors.heading, margin: 0 }}>{v}</p>

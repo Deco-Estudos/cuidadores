@@ -1,11 +1,13 @@
 import { colors, shadows, spacing } from '../../domain/constants/tokens';
 import { ROUTES } from '../../domain/constants/routes';
 import { useRouter } from '../../infrastructure/router/RouterContext';
+import { useAuth } from '../../infrastructure/state/AuthContext';
 import { HeartLogo } from './HeartLogo';
 import { Button } from './ui';
 
 export function Header({ variant = 'app' }) {
   const { navigate } = useRouter();
+  const { usuarioLogado, sair } = useAuth();
 
   if (variant === 'landing') {
     return (
@@ -37,10 +39,10 @@ export function Header({ variant = 'app' }) {
         </div>
         <div style={styles.userArea}>
           <div style={styles.userInfo}>
-            <span style={styles.userName}>Maria Silva</span>
-            <span style={styles.userEmail}>maria.silva@email.com</span>
+            <span style={styles.userName}>{usuarioLogado?.nome || 'Usuário'}</span>
+            <span style={styles.userEmail}>{usuarioLogado?.email || ''}</span>
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigate(ROUTES.LANDING)}>
+          <Button variant="outline" size="sm" onClick={() => { sair(); navigate(ROUTES.LANDING); }}>
             ↩ Sair
           </Button>
         </div>

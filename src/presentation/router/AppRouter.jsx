@@ -1,4 +1,5 @@
 import { useRouter } from '../../infrastructure/router/RouterContext';
+import { useAuth } from '../../infrastructure/state/AuthContext';
 import { ROUTES } from '../../domain/constants/routes';
 
 import { LandingPage } from '../pages/LandingPage';
@@ -39,8 +40,22 @@ const routeMap = {
   [ROUTES.AGENDAMENTOS]:             AgendamentosPage,
 };
 
+const publicRoutes = [
+  ROUTES.LANDING,
+  ROUTES.LOGIN,
+  ROUTES.CADASTRO,
+  ROUTES.RECUPERAR_SENHA,
+];
+
 export function AppRouter() {
   const { currentRoute } = useRouter();
+  const { estaLogado } = useAuth();
+  const isPublicRoute = publicRoutes.includes(currentRoute);
+
+  if (!estaLogado && !isPublicRoute) {
+    return <LoginPage />;
+  }
+
   const Page = routeMap[currentRoute] ?? LandingPage;
   return <Page />;
 }

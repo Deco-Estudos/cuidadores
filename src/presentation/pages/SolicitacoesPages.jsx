@@ -7,6 +7,7 @@ import { Button, Badge, Card, Divider } from '../components/ui';
 import { mockSolicitacoes, mockAgendamentos, mockResumoMes } from '../../infrastructure/data/mockSolicitacoes';
 import { mockCuidadores } from '../../infrastructure/data/mockCuidadores';
 import { useState } from 'react';
+import { useAssistidos } from '../../infrastructure/state/AssistidosContext';
 
 const statusVariant = { pendente: 'pending', aprovada: 'ok', cancelada: 'cancel' };
 const statusLabel = { pendente: '⏱ Pendente', aprovada: '✓ Aprovada', cancelada: '✕ Cancelada' };
@@ -66,16 +67,21 @@ export function ConfirmacaoSolicitacaoPage() {
 // ─── MINHAS SOLICITAÇÕES ──────────────────────────────────
 export function MinhasSolicitacoesPage() {
   const { navigate } = useRouter();
+  const { assistidos } = useAssistidos();
   const [activeTab, setActiveTab] = useState('todas');
+  const nomesAssistidos = assistidos.map((assistido) => assistido.nome);
+  const solicitacoesDoUsuario = mockSolicitacoes.filter((solicitacao) =>
+    nomesAssistidos.some((nome) => solicitacao.assistidoNome.includes(nome))
+  );
 
   const tabs = [
-    { key: 'todas', label: 'Todas', count: mockSolicitacoes.length },
-    { key: 'pendente', label: 'Pendentes', count: mockSolicitacoes.filter(s => s.status === 'pendente').length },
-    { key: 'aprovada', label: 'Aprovadas', count: mockSolicitacoes.filter(s => s.status === 'aprovada').length },
-    { key: 'cancelada', label: 'Canceladas', count: 0 },
+    { key: 'todas', label: 'Todas', count: solicitacoesDoUsuario.length },
+    { key: 'pendente', label: 'Pendentes', count: solicitacoesDoUsuario.filter(s => s.status === 'pendente').length },
+    { key: 'aprovada', label: 'Aprovadas', count: solicitacoesDoUsuario.filter(s => s.status === 'aprovada').length },
+    { key: 'cancelada', label: 'Canceladas', count: solicitacoesDoUsuario.filter(s => s.status === 'cancelada').length },
   ];
 
-  const filtered = activeTab === 'todas' ? mockSolicitacoes : mockSolicitacoes.filter(s => s.status === activeTab);
+  const filtered = activeTab === 'todas' ? solicitacoesDoUsuario : solicitacoesDoUsuario.filter(s => s.status === activeTab);
 
   return (
     <AppLayout>
@@ -138,6 +144,13 @@ export function MinhasSolicitacoesPage() {
 
 // ─── AGENDAMENTOS ─────────────────────────────────────────
 export function AgendamentosPage() {
+  const { assistidos } = useAssistidos();
+  const nomesAssistidos = assistidos.map((assistido) => assistido.nome);
+  const agendamentosDoUsuario = mockAgendamentos.filter((agendamento) =>
+    nomesAssistidos.some((nome) => agendamento.assistidoNome.includes(nome))
+  );
+  const proximoAgendamento = agendamentosDoUsuario[0];
+
   return (
     <AppLayout>
       <div style={{ marginBottom: '28px' }}>
@@ -148,7 +161,11 @@ export function AgendamentosPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}>
         {/* Lista */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {mockAgendamentos.map(ag => (
+          {agendamentosDoUsuario.length === 0 ? (
+            <Card style={{ padding: '40px', textAlign: 'center', color: colors.muted }}>
+              Nenhum agendamento encontrado para os seus assistidos.
+            </Card>
+          ) : agendamentosDoUsuario.map(ag => (
             <Card key={ag.id} style={{ padding: '20px 24px' }}>
               <p style={{ fontSize: '13px', fontWeight: 600, color: colors.primary, margin: '0 0 6px' }}>
                 📅 {ag.data} · {ag.horario}
@@ -167,19 +184,25 @@ export function AgendamentosPage() {
           {/* Próximo atendimento */}
           <div style={{ background: gradients.primary, borderRadius: radius.xl, padding: '24px', color: colors.white }}>
             <p style={{ fontSize: '13px', opacity: 0.8, margin: '0 0 8px' }}>⚡ Próximo Atendimento</p>
-            <p style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px' }}>{mockAgendamentos[0].cuidadorNome}</p>
-            <p style={{ fontSize: '13px', opacity: 0.85, margin: 0 }}>
-              {mockAgendamentos[0].data} · {mockAgendamentos[0].horario} · {mockAgendamentos[0].turno}
-            </p>
+            {proximoAgendamento ? (
+              <>
+                <p style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 4px' }}>{proximoAgendamento.cuidadorNome}</p>
+                <p style={{ fontSize: '13px', opacity: 0.85, margin: 0 }}>
+                  {proximoAgendamento.data} · {proximoAgendamento.horario} · {proximoAgendamento.turno}
+                </p>
+              </>
+            ) : (
+              <p style={{ fontSize: '13px', opacity: 0.85, margin: 0 }}>Nenhum atendimento confirmado.</p>
+            )}
           </div>
 
           {/* Resumo do mês */}
           <Card>
             <p style={{ fontSize: '16px', fontWeight: 600, color: colors.heading, margin: '0 0 16px' }}>Resumo do Mês</p>
             {[
-              ['Total de atendimentos', mockResumoMes.total, colors.heading],
-              ['Confirmados', mockResumoMes.confirmados, colors.okText],
-              ['Pendentes', mockResumoMes.pendentes, colors.pendingText],
+              ['Total de atendimentos', agendamentosDoUsuario.length, colors.heading],
+              ['Confirmados', agendamentosDoUsuario.filter(a => a.status === 'confirmado').length, colors.okText],
+              ['Pendentes', agendamentosDoUsuario.filter(a => a.status !== 'confirmado').length, colors.pendingText],
             ].map(([l, v, c]) => (
               <div key={l} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${colors.border}` }}>
                 <span style={{ fontSize: '13px', color: colors.secondary }}>{l}</span>

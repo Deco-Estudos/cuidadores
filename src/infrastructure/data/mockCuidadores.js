@@ -6,13 +6,14 @@ export const mockCuidadores = [
     experiencia: '8 anos',
     avaliacao: 4.9,
     totalAvaliacoes: 47,
+    genero: 'Feminino',
     especialidades: [
       'Cuidados para Parkinson e Alzheimer',
       'Auxílio com cadeira de rodas e mobilização',
       'Administração de medicamentos',
       'Higiene pessoal e banho assistido',
     ],
-    turnos: ['Manhã (06h–14h)', 'Tarde (14h–22h)'],
+    turnos: ['manhã', 'tarde'],
     diasDisponiveis: 'Seg a Sex',
     descricao:
       'Especialista em cuidados neurológicos com foco em mobilidade e qualidade de vida. Trabalha com carinho e dedicação, sempre priorizando o bem-estar do assistido e o conforto da família.',
@@ -27,13 +28,14 @@ export const mockCuidadores = [
     experiencia: '5 anos',
     avaliacao: 4.7,
     totalAvaliacoes: 31,
+    genero: 'Masculino',
     especialidades: [
       'Cuidados com pacientes em cadeira de rodas',
       'Reabilitação pós-cirúrgica',
       'Acompanhamento em consultas médicas',
       'Fisioterapia assistida',
     ],
-    turnos: ['Tarde (14h–22h)', 'Noite (22h–06h)'],
+    turnos: ['tarde', 'noite'],
     diasDisponiveis: 'Seg a Sáb',
     descricao:
       'Experiência com pacientes em cadeira de rodas e reabilitação pós-cirúrgica. Comunicativo e paciente, constrói vínculos de confiança com os assistidos.',
@@ -48,13 +50,14 @@ export const mockCuidadores = [
     experiencia: '12 anos',
     avaliacao: 5.0,
     totalAvaliacoes: 78,
+    genero: 'Feminino',
     especialidades: [
       'Cuidados avançados para Parkinson',
       'Demência e desorientação',
       'Cuidados paliativos',
       'Estimulação cognitiva',
     ],
-    turnos: ['Manhã (06h–14h)'],
+    turnos: ['manhã'],
     diasDisponiveis: 'Seg a Dom',
     descricao:
       'Referência no cuidado de idosos com Parkinson, com abordagem acolhedora e humanizada. Formação em gerontologia e vasta experiência em cuidados domiciliares.',

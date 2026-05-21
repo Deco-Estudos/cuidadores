@@ -113,7 +113,7 @@ export function CadastroStep1() {
           onChange={setIsAssistido}
           options={[{ value: 'sim', label: 'Sim, sou eu mesmo(a)' }, { value: 'nao', label: 'Não, é outra pessoa' }]}
         />
-        <Input label="Idade do Assistido" placeholder="Digite a idade" required value={idade} onChange={e => setIdade(e.target.value)} />
+        <Input label="Idade do Assistido" type="number" placeholder="Digite a idade" required value={idade} onChange={e => setIdade(e.target.value)} />
         {isAssistido === 'nao' && (
           <Input label="Nome do Assistido" placeholder="Digite o nome completo" required value={nome} onChange={e => setNome(e.target.value)} />
         )}
