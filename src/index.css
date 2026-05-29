@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #ffffff;
+  color: #171717;
+}
+
+button, input, select, textarea {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4D4D4;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A3A3A3;
+}
+
+/* Responsividade básica para layouts que usam estilos inline */
+@media (max-width: 1024px) {
+  .page-inner {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+
+  .page-main {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .grid-3,
+  .grid-sidebar,
+  .grid-profile {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-inner {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .page-main {
+    padding: 24px 16px 48px !important;
+  }
+
+  .grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page-inner > div:first-child span {
+    font-size: 16px !important;
+  }
+}
